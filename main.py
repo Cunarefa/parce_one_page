@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-HOST = 'https://www.avforums.com'  # main page url
+HOST = 'https://www.avforums.com'
 URL = 'https://www.avforums.com/threads/samsung-q80t-qe55q80t-review-comments.2328417/'  # parsed page url
 HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -10,7 +10,24 @@ HEADERS = {
 }
 
 
-def get_html(url, params=None):  # get page html
+def get_html(url, params=None):
     response = requests.get(url, params=params, headers=HEADERS)
     return response
+
+def get_content(html):
+    soup = BeautifulSoup(html, 'html.parser')
+    items = soup.find_all('article', class_='message')
+    parsed_data = []
+
+    for item in items:
+        parsed_data.append(
+            {
+                'author': item.find('h4', class_='message-name').get_text(strip=True),
+                'author_link': HOST + item.find('div', class_='message-userDetails').find('a').get('href'),
+                'author_title': item.find('h5', class_='userTitle').get_text(),
+                'date': item.find('div', class_='message-attribution-main').get_text(strip=True),
+                'content': item.find('div', class_='message-content').get_text(strip=True),
+            }
+        )
+    return parsed_data
 
