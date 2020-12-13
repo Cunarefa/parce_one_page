@@ -29,5 +29,12 @@ def get_content(html):
                 'content': item.find('div', class_='message-content').get_text(strip=True),
             }
         )
+
+    with open('content.json', 'w') as file:
+        json.dump(parsed_data, file, indent=2)
+
     return parsed_data
+
+html = get_html(URL)
+print(get_content(html.text))
 
