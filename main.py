@@ -18,20 +18,33 @@ def get_html(url, params=None):
 def get_content(html):
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.find_all('article', class_='message')
-    parsed_data = []
+    # parsed_data = []
 
-    for item in items:
-        parsed_data.append(
-            {
+    parsed_data = list(map(lambda item: {
                 'author': item.find('h4', class_='message-name').get_text(strip=True),
                 'author_link': HOST + item.find('div', class_='message-userDetails').find('a').get('href'),
                 'author_title': item.find('h5', class_='userTitle').get_text(),
                 'date': item.find('div', class_='message-attribution-main').get_text(strip=True),
                 'content': item.find('div', class_='message-content').get_text(strip=True),
-            }
-        )
+            }, items))
+    # parsed_data = list(parsed_data)
+    # for item in items:
+    #     parsed_data.append(
+    #         {
+    #             'author': item.find('h4', class_='message-name').get_text(strip=True),
+    #             'author_link': HOST + item.find('div', class_='message-userDetails').find('a').get('href'),
+    #             'author_title': item.find('h5', class_='userTitle').get_text(),
+    #             'date': item.find('div', class_='message-attribution-main').get_text(strip=True),
+    #             'content': item.find('div', class_='message-content').get_text(strip=True),
+    #         }
+    #     )
 
-    with open('content.json', 'w') as file:
-        json.dump(parsed_data, file, indent=2)
+    # with open('content.json', 'w') as file:
+    #     json.dump(parsed_data, file, indent=2)
 
-    return
+    return parsed_data
+
+def parse():
+    html = get_html(URL)
+    print(get_content(html.text))
+parse()
